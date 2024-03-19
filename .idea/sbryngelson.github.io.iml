@@ -42,5 +42,6 @@
     <orderEntry type="library" scope="PROVIDED" name="sass-listen (v4.0.0, rbenv: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thin (v1.8.2, rbenv: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="webrick (v1.8.1, rbenv: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" name="jquery-3.6.4" level="application" />
   </component>
 </module>
