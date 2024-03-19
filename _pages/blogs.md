@@ -12,7 +12,7 @@ permalink: /blogs/
     {% include_relative blogs_pages/running_static_website_using_jekyll.md %}
 </div>
 
-<button class="collapsible4">BPF Compile then load attach and run using Skeleton</button>
+<button class="collapsible4">BPF compile then load attach and run using Skeleton</button>
 <div class="content2">
     {% include_relative blogs_pages/bpf_compile_build_run.md %}
 </div>

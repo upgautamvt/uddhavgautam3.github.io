@@ -14,34 +14,34 @@ vmlinux.h is generated code. it contains all of the type definitions that your r
 
 
 #### Memory Management Structures
-  - `page`: Represents a physical page frame.
-  - `vm_area_struct`: Represents a memory mapping area.
-  - `mm_struct`: Represents a process's memory map.
+- `page`: Represents a physical page frame.
+- `vm_area_struct`: Represents a memory mapping area.
+- `mm_struct`: Represents a process's memory map.
 
 
 #### Device and Driver Structures
-  - `device`: Represents a hardware device.
-  - `platform_device`: Represents a device on a platform bus.
-  - `pci_dev`: Represents a PCI device.
+- `device`: Represents a hardware device.
+- `platform_device`: Represents a device on a platform bus.
+- `pci_dev`: Represents a PCI device.
 
 #### Networking Structures
-  - `sk_buff`: Represents a network packet buffer.
-  - `net_device`: Represents a network interface device.
-  - `sock`: Represents a socket.
+- `sk_buff`: Represents a network packet buffer.
+- `net_device`: Represents a network interface device.
+- `sock`: Represents a socket.
 
 #### Filesystem Structures
-  - `inode`: Represents an inode in the filesystem.
-  - `file_operations`: Represents operations on a file.
-  - `address_space`: Represents the address space of a file.
+- `inode`: Represents an inode in the filesystem.
+- `file_operations`: Represents operations on a file.
+- `address_space`: Represents the address space of a file.
 
 #### Kernel Constants and Macros
-  - Configuration constants controlling various kernel features.
-  - Macros for handling bit manipulation, memory allocation, and more.
-  - Constants for error codes, system call numbers, and other kernel interfaces.
+- Configuration constants controlling various kernel features.
+- Macros for handling bit manipulation, memory allocation, and more.
+- Constants for error codes, system call numbers, and other kernel interfaces.
 
 #### Other Miscellaneous Structures
-  - Structures related to timers, interrupts, locks, and synchronization primitives.
-  - Structures related to virtual memory management, scheduling, and process control.
+- Structures related to timers, interrupts, locks, and synchronization primitives.
+- Structures related to virtual memory management, scheduling, and process control.
 
 ## <a name="_9jdnk8bhj7pn"></a>What is the use/benefits of using vmlinux.h?
 Since the vmlinux.h file is generated from your installed kernel, your bpf program could break if you try to run it on another machine without recompiling if it’s running a different kernel version. This is because, from version to version, definitions of internal structs change within the linux source code. So, the best practice is always recompile your bpf program before running it. It means including vmlinux.h, usually demands, recompiling your bpf program. Then why do you want to include this vmlinux.h at all?
@@ -101,6 +101,8 @@ Several other advantages of skeleton
 - BPF skeleton provides an interface for user space programs to work with BPF global variables. The skeleton code memory maps global variables as a struct into user space. The struct interface allows user space programs to initialize BPF programs before the BPF load phase and fetch and update data from user space afterward.
 - The skel.h file reflects the object file structure by listing out the available maps, programs, etc. BPF skeleton provides direct access to all the BPF maps and BPF programs as struct fields. This eliminates the need for string-based lookups with bpf\_object\_find\_map\_by\_name() and bpf\_object\_find\_program\_by\_name() APIs, reducing errors due to BPF source code and user-space code getting out of sync.
 - The embedded bytecode representation of the object file ensures that the skeleton and the BPF object file are always in sync.
+
+
 ## <a name="_8qitevxmanxj"></a>Step by Step compile, build, run your eBPF program
 ```
 **upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$** bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
@@ -125,7 +127,7 @@ Then we utilize the genrated ThousandLoopBpf.o in our next command to generate s
 
 Finally, we run ThousandLoopBpf from inside docker container as explained below.
 
-__Note__: We will soon create another page for BPF developer machine setup. 
+__Note__: We will soon create another page for BPF developer machine setup.
 
 I have volume mounted the whole CLionProjects directory inside my docker container, where I have configured everything that I need to run a bpf program. Now, from inside container, I can access all the Clion cloned projects.
 
@@ -315,7 +317,7 @@ And can do from host machine.
 upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$ sudo cat /sys/kernel/debug/tracing/trace\_pipe
 ```
 
-See the output below, 
+See the output below,
 ```
 [sudo] password for upgautam:
 
@@ -346,3 +348,187 @@ See the output below,
 
 
 Command like "clear" in terminal will trigger do\_exit syscall.
+
+# Automate using Makefile
+I added several bpf c files in my bpf directory
+`
+upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$ ls
+BillionLoopBpf.c  HundredMillionLoopBpf.c   Makefile          output      TenBillionLoopBpf.c  TenMillionLoopBpf.c   ThousandLoopBpf.c
+HundredLoopBpf.c  HundredThousandLoopBpf.c  MillionLoopBpf.c  template.c  TenLoopBpf.c         TenThousandLoopBpf.c  vmlinux.h
+`
+
+I need to automate all build process (i.e., compile filename.c to filename.o then use bpftool gen to generate filename.skel.h fiel inside output directiy, and then create filename.ske.c, which includes filename.skel.h and uses filename object structs etc., and then finally compiling filename.skel.c file.
+
+For this, I created Makefile
+
+## Makefile
+```cmake
+CC = clang
+CFLAGS = -g -target bpf -Wall -O2
+INCLUDES = -I$(shell realpath ~/CLionProjects/decoupling/linux/tools/lib) -I$(shell realpath ~/CLionProjects/decoupling/linux/usr/include)
+
+# Define source files
+SRCS := $(filter-out template.c,$(wildcard *.c))
+OBJS = $(SRCS:.c=.o)
+
+# Define targets
+all: $(OBJS)
+
+# Rule to compile any .c file into a .o file and generate skeleton file
+%.o: %.c
+    $(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+    # Generate skeleton file and redirect stdout to the specified file
+    bpftool gen skeleton $@ name $(basename $@) | tee ./output/$(basename $@).skel.h > /dev/null 2>&1
+    # Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+    cat template.c | sed 's/%s/$(basename $@)/g' > ./$(basename $@).skel.c
+
+
+# Define a rule to clean up generated files
+clean:
+    rm -f $(OBJS)
+    rm -rf ./output/*
+    rm -f *.skel.c
+```
+
+## template.c
+
+```c
+// template.c
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <string.h>
+#include <errno.h>
+#include <bpf/libbpf.h>
+#include "output/%s.skel.h"
+
+
+static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
+{
+return vfprintf(stderr, format, args);
+}
+
+
+static volatile sig_atomic_t stop;
+
+
+static void sig_int(int signo)
+{
+stop = 1;
+}
+
+
+int main(int argc, char **argv)
+{
+struct %s *skel;
+int err;
+
+
+/* Set up libbpf errors and debug info callback */
+libbpf_set_print(libbpf_print_fn);
+
+
+/* Open load and verify BPF application */
+skel = %s__open_and_load();
+if (!skel) {
+fprintf(stderr, "Failed to open BPF skeleton\n");
+return 1;
+}
+
+
+/* Attach tracepoint handler */
+err = %s__attach(skel);
+if (err) {
+fprintf(stderr, "Failed to attach BPF skeleton\n");
+goto cleanup;
+}
+
+
+if (signal(SIGINT, sig_int) == SIG_ERR) {
+fprintf(stderr, "can't set signal handler: %s\n", strerror(errno));
+goto cleanup;
+}
+
+
+printf("Successfully started! Please run `sudo cat /sys/kernel/debug/tracing/trace_pipe` "
+"to see output of the BPF programs.\n");
+
+
+while (!stop) {
+fprintf(stderr, ".");
+sleep(1);
+}
+
+
+cleanup:
+%s__destroy(skel);
+return -err;
+}
+
+```
+
+## Running Makefile
+```c
+upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$ make
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c BillionLoopBpf.c -o BillionLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton BillionLoopBpf.o name BillionLoopBpf | tee ./output/BillionLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/BillionLoopBpf/g' > ./BillionLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c HundredLoopBpf.c -o HundredLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton HundredLoopBpf.o name HundredLoopBpf | tee ./output/HundredLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/HundredLoopBpf/g' > ./HundredLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c HundredMillionLoopBpf.c -o HundredMillionLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton HundredMillionLoopBpf.o name HundredMillionLoopBpf | tee ./output/HundredMillionLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/HundredMillionLoopBpf/g' > ./HundredMillionLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c HundredThousandLoopBpf.c -o HundredThousandLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton HundredThousandLoopBpf.o name HundredThousandLoopBpf | tee ./output/HundredThousandLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/HundredThousandLoopBpf/g' > ./HundredThousandLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c MillionLoopBpf.c -o MillionLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton MillionLoopBpf.o name MillionLoopBpf | tee ./output/MillionLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/MillionLoopBpf/g' > ./MillionLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c TenBillionLoopBpf.c -o TenBillionLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton TenBillionLoopBpf.o name TenBillionLoopBpf | tee ./output/TenBillionLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/TenBillionLoopBpf/g' > ./TenBillionLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c TenLoopBpf.c -o TenLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton TenLoopBpf.o name TenLoopBpf | tee ./output/TenLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/TenLoopBpf/g' > ./TenLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c TenMillionLoopBpf.c -o TenMillionLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton TenMillionLoopBpf.o name TenMillionLoopBpf | tee ./output/TenMillionLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/TenMillionLoopBpf/g' > ./TenMillionLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c TenThousandLoopBpf.c -o TenThousandLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton TenThousandLoopBpf.o name TenThousandLoopBpf | tee ./output/TenThousandLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/TenThousandLoopBpf/g' > ./TenThousandLoopBpf.skel.c
+clang -g -target bpf -Wall -O2 -I/home/upgautam/CLionProjects/decoupling/linux/tools/lib -I/home/upgautam/CLionProjects/decoupling/linux/usr/include -c ThousandLoopBpf.c -o ThousandLoopBpf.o
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton ThousandLoopBpf.o name ThousandLoopBpf | tee ./output/ThousandLoopBpf.skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/ThousandLoopBpf/g' > ./ThousandLoopBpf.skel.c
+
+upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$ ls
+BillionLoopBpf.c       HundredLoopBpf.skel.c         HundredThousandLoopBpf.o       MillionLoopBpf.skel.c  TenBillionLoopBpf.skel.c  TenMillionLoopBpf.o        ThousandLoopBpf.c
+BillionLoopBpf.o       HundredMillionLoopBpf.c       HundredThousandLoopBpf.skel.c  output                 TenLoopBpf.c              TenMillionLoopBpf.skel.c   ThousandLoopBpf.o
+BillionLoopBpf.skel.c  HundredMillionLoopBpf.o       Makefile                       template.c             TenLoopBpf.o              TenThousandLoopBpf.c       ThousandLoopBpf.skel.c
+HundredLoopBpf.c       HundredMillionLoopBpf.skel.c  MillionLoopBpf.c               TenBillionLoopBpf.c    TenLoopBpf.skel.c         TenThousandLoopBpf.o       vmlinux.h
+HundredLoopBpf.o       HundredThousandLoopBpf.c      MillionLoopBpf.o               TenBillionLoopBpf.o    TenMillionLoopBpf.c       TenThousandLoopBpf.skel.c
+upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$ ls output/
+BillionLoopBpf.skel.h  HundredMillionLoopBpf.skel.h   MillionLoopBpf.skel.h     TenLoopBpf.skel.h         TenThousandLoopBpf.skel.h
+HundredLoopBpf.skel.h  HundredThousandLoopBpf.skel.h  TenBillionLoopBpf.skel.h  TenMillionLoopBpf.skel.h  ThousandLoopBpf.skel.h
+
+```
