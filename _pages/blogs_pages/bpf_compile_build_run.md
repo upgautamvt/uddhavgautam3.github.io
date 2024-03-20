@@ -125,7 +125,7 @@ Then we utilize the genrated ThousandLoopBpf.o in our next command to generate s
 **upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$** clang -g -I`realpath ~/CLionProjects/decoupling/linux/tools/lib` -I`realpath ~/CLionProjects/decoupling/linux/usr/include` -L`realpath ~/CLionProjects/decoupling/linux/tools/lib/bpf` -lbpf ThousandLoopBpf.skel.c -o ThousandLoopBpf
 ```
 
-Finally, we run ThousandLoopBpf from inside docker container as explained below.
+Finally, we run ThousandLoopBpf from inside QEMU (Note that QEMU is not docker container) as explained below.
 
 __Note__: We will soon create another page for BPF developer machine setup.
 
@@ -135,16 +135,29 @@ From Clion, I cloned https://github.com/rosalab/decoupling and switched to milo-
 
 From host machine, I ran to start qemu
 ```
-sudo make qemu-run
+sudo make qemu-run //starts qemu
+//sudo make qemu-ssh //then you can ssh as many shells as you need
 ```
 
-Now, I am inside docker container where I am installed latest linux kernel and all needed libraries for my BPF development. And I run my
+Now, I am inside QEMU shell where I am installed latest linux kernel and all needed libraries for my BPF development. And I run my
 
 ```
 root@q:/CLionProjects/fastpathtestBpf/bpf# ./ThousandLoopBpf
 ```
+then I am inside qemu where I am installed latest linux kernel and all needed libraries for my BPF development. And I run my
 
-Now, create corresponding loader implementation file for ThousandLoopBpf.skel.h, named that to ThousandLoopBpf.skel.c, which should be as below. How did I know this code? I just copy and pasted from some official site and then all I needed to change is name of the struct that I highlight in Yellow below. I am using Clion IDE, which does auto-completion, so much easy to complete this source code.
+`
+root@q:/CLionProjects/fastpathtestBpf/bpf# ./ThousandLoopBpf //this is QEMU, not docker
+root@q:~# cat /sys/kernel/debug/tracing/trace_pipe
+`
+
+and from another ssh sehll,
+`
+root@q:~# clear //or any command that should trigger kprobe/do_exit
+`
+
+
+Now, create corresponding loader implementation file for ThousandLoopBpf.skel.h, named that to ThousandLoopBpf.skel.c, which should be as below. How did I know this code? I just copy and pasted from some official site and then all I needed to change is name of the struct that I highlight in Yellow below. I am using Clion IDE, which does auto-completion, so much easy to complete this source code. (Note: This whole process is automated using Makefile. Keep reading below..)
 
 ## <a name="_1k97u1fu4v97"></a>Source Code
 ### <a name="_jl0riix6va0h"></a>ThousandLoop.c
@@ -376,21 +389,22 @@ all: $(OBJS)
 
 # Rule to compile any .c file into a .o file and generate skeleton file
 %.o: %.c
-    $(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-    # Generate skeleton file and redirect stdout to the specified file
-    bpftool gen skeleton $@ name $(basename $@) | tee ./output/$(basename $@).skel.h > /dev/null 2>&1
-    # Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
-    cat template.c | sed 's/%s/$(basename $@)/g' > ./$(basename $@).skel.c
+$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+# Generate skeleton file and redirect stdout to the specified file
+bpftool gen skeleton $@ name $(basename $@) | tee ./output/$(basename $@).skel.h > /dev/null 2>&1
+# Generate skel.c file with content and replace occurrences of "ThousandLoopBpf" with the basename of the target
+cat template.c | sed 's/%s/$(basename $@)/g' > ./$(basename $@).skel.c
 
 
 # Define a rule to clean up generated files
 clean:
-    rm -f $(OBJS)
-    rm -rf ./output/*
-    rm -f *.skel.c
+rm -f $(OBJS)
+rm -rf ./output/*
+rm -f *.skel.c
 ```
 
 ## template.c
+This template.c file is what we see mostly in our corresponding .skel.c files. Those .skel.c files substitute %s with the actual names.
 
 ```c
 // template.c
@@ -530,5 +544,35 @@ HundredLoopBpf.o       HundredThousandLoopBpf.c      MillionLoopBpf.o           
 upgautam@ubuntu205:~/CLionProjects/fastpathtestBpf/bpf$ ls output/
 BillionLoopBpf.skel.h  HundredMillionLoopBpf.skel.h   MillionLoopBpf.skel.h     TenLoopBpf.skel.h         TenThousandLoopBpf.skel.h
 HundredLoopBpf.skel.h  HundredThousandLoopBpf.skel.h  TenBillionLoopBpf.skel.h  TenMillionLoopBpf.skel.h  ThousandLoopBpf.skel.h
-
 ```
+
+## If docker is using port, and qemu won't start then you can restart docker
+`
+sudo systemctl restart docker
+`
+
+
+There are other ways to load BPF bytecode into the system other than using that generated skeleton header file.
+
+We can write manual loader C program, or using bpftool with autoattach. There are several other python or Go based loaders, or BCC loaders. I only discuss here bpftool autoattach and writing manual C loader program.
+
+### Using bpftool autoattach
+For any HelloWorldBpf.o that is compiled from HelloWorldBpf.c bpf c program,
+`
+sudo bpftool prog load HelloWorldBpf.o /sys/fs/bpf/HelloWorldBpf type tracepoint autoattach
+`
+But it worked only for "SEC("tracepoint/syscalls/sys_enter_execve")", and did not work for "SEC("kprobe/any_k_probe_traceable_kernel_function")
+"
+
+## Manual C program to load Bpf program
+TODO:
+
+## Few useful references
+https://github.com/iovisor/bcc/blob/master/docs/reference_guide.md
+https://liuhangbin.netlify.app/post/bpf-skeleton/
+https://docs.kernel.org/bpf/libbpf/libbpf_overview.html
+
+## Host, Docker, QEMU
+In our setup, Docker is providing root file system to QEMU, and docker also providing all build related things to QEMU. QEMU has new kernel and all build libraries to run bpf program.
+
+I will write separate blog for how we setup whole inner_unikernel project, where we have this host, docker, qemu concept. 
