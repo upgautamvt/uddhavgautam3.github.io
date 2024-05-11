@@ -671,6 +671,132 @@ https://github.com/iovisor/bcc/blob/master/docs/reference_guide.md
 https://liuhangbin.netlify.app/post/bpf-skeleton/
 https://docs.kernel.org/bpf/libbpf/libbpf_overview.html
 
+## using manual loader
+let's name this file as array.kern.c
+```c
+#include <linux/bpf.h>
+#include <linux/types.h>
+#include <bpf/bpf_helpers.h>
+
+char LISENSE[] SEC("license") = "Dual BSD/GPL";
+
+struct {
+    __uint(type, BPF_MAP_TYPE_ARRAY);
+    __type(key, __u32);
+    __type(value, __u32);
+    __uint(max_entries, 256);
+} ar SEC(".maps");
+
+
+/**
+ * Counter program that traces the number of times this
+ * hookpoint has been hit
+ */
+SEC("tp/syscalls/sys_enter_getcwd")
+int array(void *ctx)
+{
+    __u32 key = 0;
+    __u32 * val = bpf_map_lookup_elem(&ar, &key);
+    if (!val) {
+        return -1;
+    } else {
+        __u32 new = (*val) + 1;
+        bpf_map_update_elem(&ar, &key, &new, BPF_ANY);
+    }
+    return 0;
+}
+```
+For above file, we can make a loader file such as (let's give name to load.user.c)
+```c
+/**
+ * User program for loading a single generic program and attaching
+ * Usage: ./load.user bpf_file bpf_prog_name
+ */
+#include <stdio.h>
+#include <unistd.h>
+#include <bpf/libbpf.h>
+
+int main(int argc, char *argv[])
+{
+    if (argc != 3) {
+        printf("Not enough args\n");
+        printf("Expected: ./load.user bpf_file bpf_prog_name\n");
+        return -1;
+    }
+
+    char * bpf_path = argv[1];
+    char * prog_name = argv[2];
+
+    struct bpf_object * prog = bpf_object__open(bpf_path);
+    
+    if (bpf_object__load(prog)) {
+        printf("Failed");
+        return 0;
+    }
+
+    struct bpf_program * program = bpf_object__find_program_by_name(prog, prog_name);
+
+    if (program == NULL) {
+        printf("Shared 1 failed\n");
+        return 0;
+    }
+
+    bpf_program__attach(program);
+
+    while (1) {
+        sleep(1);
+    }
+
+    return 0;
+}
+
+```
+
+let's create a Makefile to compile above both .kern.c and .user.c
+```c
+# $(..) is a function call. wilcard is a function that expands
+# space separated list of filenames that match .kern.c
+SOURCES := $(wildcard *.kern.c)
+# := is assignment operator. replace .c with .o for each files in SOURCES
+# it means if we have uddhav.c then it becomes uddhav.o in side Make context, but we also have .c files in our directory
+# = means substitution operation
+# target:dependencies   we also called prerequisites instead of dependencies
+FILES := $(SOURCES:.c=.o)
+
+USER_SRC := $(wildcard *.user.c)
+USER := $(USER_SRC:.c=)
+
+BPF-CLANG := clang
+BPF_CLANG_CFLAGS := -target bpf -g -Wall -O2 -c
+INCLUDE := -I../linux/usr/include/ -I../linux/tools/lib/
+USER-CFLAGS := -I../linux/usr/include -I../linux/tools/lib/ -L../linux/tools/lib/bpf/
+
+# all contains all files with .user.c and .kern.c
+all: $(FILES) $(USER)
+
+# %.c means any file ending with .c. In Makefile we don't have * unless some specific function calls (e.g., wildcard
+
+#  $(wildcard *.kern.c:.c=.o) : %.o : %.c is same as $(FILES) : %.o : %.c
+# $< is prerequisites while $@ represents target in Makefile. @ means output (end) to that at.
+# This is like a for loop
+$(FILES) : %.o : %.c
+	$(BPF-CLANG) $(INCLUDE) $(BPF_CLANG_CFLAGS) $< -o $@
+
+# -l to provide library to link against
+# it means for loader, we need to link against libbpf library
+$(USER) : % : %.c
+	gcc $(USER-CFLAGS) -lbpf $< -o $@
+
+.PHONY : clean
+clean :
+	rm $(FILES) $(USER)
+
+```
+
+now, just run "make" and then use `./load.user array.kern.o array`
+That's it. It should load successfully. Note: array is a function name inside array.kern.c. Therfore, array is our bpf_prog 
+Because syntax to load is: ./user.load bpf_file bpf_prog
+
 ## Host, Docker, QEMU
 In our setup, Docker is providing root file system to QEMU, and docker also providing all build related things to QEMU. QEMU has new kernel and all build libraries to run bpf program.
 
