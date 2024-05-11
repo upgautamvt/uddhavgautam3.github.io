@@ -797,6 +797,46 @@ now, just run "make" and then use `./load.user array.kern.o array`
 That's it. It should load successfully. Note: array is a function name inside array.kern.c. Therfore, array is our bpf_prog 
 Because syntax to load is: ./user.load bpf_file bpf_prog
 
+Now, let's write another program named micro.c that triggers tp/syscalls/sys_enter_getcwd
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <time.h>
+#include <stdint.h>
+
+uint64_t run()
+{
+    struct timespec begin, end;
+    char buf[256];
+    clock_gettime(CLOCK_MONOTONIC_RAW, &begin);
+    for (int i = 0; i < 5; i++) {
+        getcwd(buf, 256);
+    }
+    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+
+    uint64_t time = (end.tv_sec - begin.tv_sec) * 1000000000UL + (end.tv_nsec - begin.tv_nsec);
+    //printf("Time is %lu nanoseconds\n", time);
+    return time;
+}
+
+int main()
+{
+    printf("PID: %d\n", getpid());
+    getchar();
+    uint64_t results[10];
+    run(); // Cache stuff?
+    for (int i = 0; i < 10; i++) {
+        results[i] = run();
+        printf("%lu\n", results[i]);
+    }
+    return 0;
+}
+
+```
+
+now, after you have loaded the bpf program, run micro. Your bpf loader program should trigger. 
+To read trace_pipe, we can do `sudo cat /sys/kernel/debug/tracing/trace_pipe`, then in another terminal run ./micro, you should see the prink message from bpf program.
+
 ## Host, Docker, QEMU
 In our setup, Docker is providing root file system to QEMU, and docker also providing all build related things to QEMU. QEMU has new kernel and all build libraries to run bpf program.
 
