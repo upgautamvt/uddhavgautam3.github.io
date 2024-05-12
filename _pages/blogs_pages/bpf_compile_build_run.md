@@ -839,6 +839,7 @@ To read trace_pipe, we can do `sudo cat /sys/kernel/debug/tracing/trace_pipe`, t
 
 ## BPF ring buffer example
 ``c
+
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
 
@@ -887,14 +888,14 @@ int empty(void *ctx) /* empty is bpf_prg */
     return 0;
 }
 
-
-//root@fedora:~# echo 1 > /sys/kernel/debug/tracing/tracing_on
-//root@fedora:~# echo 0 > /sys/kernel/debug/tracing/tracing_on
-
-//if busy, we can kill those process(es) that are using trace_pipe
-//root@fedora:~# lsof -t /sys/kernel/debug/tracing/trace_pipe | xargs -I {} kill -9 {}
-//[1]+  Killed                  cat /sys/kernel/debug/tracing/trace_pipe
 ```
+
+To trace on: `echo 1 > /sys/kernel/debug/tracing/tracing_on`
+To trace on: `echo 0 > /sys/kernel/debug/tracing/tracing_on`
+
+we can kill those process(es) that are using trace_pipe (run as root)
+`lsof -t /sys/kernel/debug/tracing/trace_pipe | xargs -I {} kill -9 {}`
+
 
 ## Host, Docker, QEMU
 In our setup, Docker is providing root file system to QEMU, and docker also providing all build related things to QEMU. QEMU has new kernel and all build libraries to run bpf program.
