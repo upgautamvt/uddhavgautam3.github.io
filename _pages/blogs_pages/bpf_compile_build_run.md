@@ -753,7 +753,9 @@ int main(int argc, char *argv[])
 ```
 
 let's create a Makefile to compile above both .kern.c and .user.c
+
 ```c
+
 # $(..) is a function call. wilcard is a function that expands
 # space separated list of filenames that match .kern.c
 SOURCES := $(wildcard *.kern.c)
@@ -838,7 +840,7 @@ now, after you have loaded the bpf program, run micro. Your bpf loader program s
 To read trace_pipe, we can do `sudo cat /sys/kernel/debug/tracing/trace_pipe`, then in another terminal run ./micro, you should see the prink message from bpf program.
 
 ## BPF ring buffer example
-``c
+```c
 
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
