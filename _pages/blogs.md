@@ -7,6 +7,11 @@ permalink: /blogs/
 
 # Blogs
 
+<button class="collapsible1">Terraform Provisioning</button>
+<div class="content1">
+    {% include_relative blogs_pages/terraform.md %}
+</div>
+
 <button class="collapsible1">Running Static Website Using Jekyll</button>
 <div class="content1">
     {% include_relative blogs_pages/running_static_website_using_jekyll.md %}
