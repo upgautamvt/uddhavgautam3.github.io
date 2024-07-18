@@ -12,6 +12,6 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     $(".collapsible5").click(function () {
-        $(".content3").slideToggle();
+        $(".content5").slideToggle();
     });
 });

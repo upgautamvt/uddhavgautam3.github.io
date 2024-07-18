@@ -8,7 +8,7 @@ permalink: /blogs/
 # Blogs
 
 <button class="collapsible5">Terraform Provisioning</button>
-<div class="content3">
+<div class="content5">
     {% include_relative blogs_pages/terraform.md %}
 </div>
 

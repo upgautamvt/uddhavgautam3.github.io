@@ -30,7 +30,7 @@
     font-size: 15px;
 }
 
-.content3 {
+.content5 {
     padding: 0 18px;
     display: none;
     overflow: hidden;
@@ -38,7 +38,7 @@
     background-color: #c4c4c4;
 }
 
-.collapsible2{
+.collapsible2 {
     background-color: #302f2f;
     color: white;
     cursor: pointer;
@@ -50,7 +50,7 @@
     font-size: 15px;
 }
 
-.collapsible3{
+.collapsible3 {
     background-color: #302f2f;
     color: white;
     cursor: pointer;

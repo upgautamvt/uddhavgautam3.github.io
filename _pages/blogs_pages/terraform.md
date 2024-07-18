@@ -1,5 +1,3 @@
-# Terraform Infrastructure Setup for KVM VMs
-
 ## Overview
 
 **Terraform** is an open-source infrastructure as code (IaC) tool that allows you to define and provision infrastructure using declarative scripts. The core lifecycle commands of Terraform are:
