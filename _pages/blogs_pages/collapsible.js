@@ -9,3 +9,9 @@ $(document).ready(function () {
         $(".content2").slideToggle();
     });
 });
+
+$(document).ready(function () {
+    $(".collapsible5").click(function () {
+        $(".content3").slideToggle();
+    });
+});
