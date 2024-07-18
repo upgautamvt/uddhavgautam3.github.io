@@ -556,7 +556,4 @@ base_root.img  client_root.img  ubuntu-24.04-server-cloudimg-amd64.img  xdp_root
 
 ```
 
-After `terraform apply plan`
-![Screenshot after terraform plan apply](terraformPlanApply.png)
-
 Refer to: https://github.com/upgautamvt/KernelWithBpfPrograms/tree/main/benchmarks/macrobenchmarks/terraform/xdp_terraform
