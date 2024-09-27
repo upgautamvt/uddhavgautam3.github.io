@@ -7,6 +7,11 @@ permalink: /blogs/
 
 # Blogs
 
+<button class="collapsible5">IPTABLE based Router</button>
+<div class="content5">
+    {% include_relative blogs_pages/iptable_router.md %}
+</div>
+
 <button class="collapsible5">Terraform Provisioning</button>
 <div class="content5">
     {% include_relative blogs_pages/terraform.md %}
