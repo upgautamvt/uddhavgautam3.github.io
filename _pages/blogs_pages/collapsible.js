@@ -5,6 +5,12 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
+    $(".collapsible3").click(function () {
+        $(".content3").slideToggle();
+    });
+});
+
+$(document).ready(function () {
     $(".collapsible4").click(function () {
         $(".content4").slideToggle();
     });
