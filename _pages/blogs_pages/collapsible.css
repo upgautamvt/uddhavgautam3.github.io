@@ -10,7 +10,52 @@
     font-size: 15px;
 }
 
-.content1 {
+.collapsible2 {
+    background-color: #302f2f;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.collapsible3 {
+    background-color: #302f2f;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.content3 {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    color: black;
+    background-color: #c4c4c4;
+}
+
+
+.collapsible4 {
+    background-color: #302f2f;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.content4 {
     padding: 0 18px;
     display: none;
     overflow: hidden;
@@ -38,7 +83,7 @@
     background-color: #c4c4c4;
 }
 
-.collapsible2 {
+.collapsible6 {
     background-color: #302f2f;
     color: white;
     cursor: pointer;
@@ -50,7 +95,15 @@
     font-size: 15px;
 }
 
-.collapsible3 {
+.content6 {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    color: black;
+    background-color: #c4c4c4;
+}
+
+.collapsible7 {
     background-color: #302f2f;
     color: white;
     cursor: pointer;
@@ -62,19 +115,7 @@
     font-size: 15px;
 }
 
-.collapsible4 {
-    background-color: #302f2f;
-    color: white;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-    font-size: 15px;
-}
-
-.content2 {
+.content7 {
     padding: 0 18px;
     display: none;
     overflow: hidden;

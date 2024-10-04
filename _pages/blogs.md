@@ -22,13 +22,13 @@ permalink: /blogs/
     {% include_relative blogs_pages/terraform.md %}
 </div>
 
-<button class="collapsible1">Running Static Website Using Jekyll</button>
-<div class="content1">
+<button class="collapsible4">Running Static Website Using Jekyll</button>
+<div class="content4">
     {% include_relative blogs_pages/running_static_website_using_jekyll.md %}
 </div>
 
-<button class="collapsible4">BPF compile then load attach and run using Skeleton</button>
-<div class="content4">
+<button class="collapsible3">BPF compile then load attach and run using Skeleton</button>
+<div class="content3">
     {% include_relative blogs_pages/bpf_compile_build_run.md %}
 </div>
 
