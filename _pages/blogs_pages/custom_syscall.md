@@ -26,8 +26,6 @@ Below, I have provided all implementation that tells what files added or modifie
 
 ## User-space program to access system call *uddhav5204_64*
 
-**Whole Implementation***:* [https://github.com/rosalab/KernelWithBpfPrograms/commit/8b8d6c033abb052065f8b60fea593b74cfaf674e](https://github.com/rosalab/KernelWithBpfPrograms/commit/8b8d6c033abb052065f8b60fea593b74cfaf674e)
-
 **User-space directory**
 
 - Makefile  
@@ -71,7 +69,6 @@ Below, I have provided all implementation that tells what files added or modifie
 
 ## Kernel side modification
 
-**Whole implementation**: [https://github.com/upgautamvt/linux/commit/3e93bac83525560ac387567a4c2183a73dc1f61b](https://github.com/upgautamvt/linux/commit/3e93bac83525560ac387567a4c2183a73dc1f61b)
 
 ### arch/x86/entry/syscalls/syscall_64.tbl
 
@@ -96,7 +93,7 @@ Below, I have provided all implementation that tells what files added or modifie
 
 *// 64-bit syscall definition*  
 asmlinkage long sys_uddhav5204_64(void) {  
-       return 5204; *// Always return 5204*  
+       return 1000; *// Always return 1000*  
 }
 
 *//DEINEX is a macro, X tells number of arguments*  
@@ -154,7 +151,7 @@ index 000000000000..2fada3bf3d18
 +
 +// 64-bit syscall definition
 +asmlinkage long sys_uddhav5204_64(void) {
-+	return 5204; // Always return 5204
++	return 1000; // Always return 1000
 +}
 +
 +//DEINEX is a macro, X tells number of arguments
