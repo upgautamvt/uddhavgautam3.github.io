@@ -7,13 +7,13 @@ permalink: /blogs/
 
 # Blogs
 
-<button class="collapsible5">Add your own syscall</button>
-<div class="content5">
+<button class="collapsible7">Add your own syscall</button>
+<div class="content7">
     {% include_relative blogs_pages/custom_syscall.md %}
 </div>
 
-<button class="collapsible5">IPTABLE based Router</button>
-<div class="content5">
+<button class="collapsible6">IPTABLE based Router</button>
+<div class="content6">
     {% include_relative blogs_pages/iptable_router.md %}
 </div>
 
@@ -28,18 +28,18 @@ permalink: /blogs/
 </div>
 
 <button class="collapsible4">BPF compile then load attach and run using Skeleton</button>
-<div class="content2">
+<div class="content4">
     {% include_relative blogs_pages/bpf_compile_build_run.md %}
 </div>
 
 
-<button class="collapsible2">
+<button class="collapsible1">
   <a href="/blogs_pdfs/GentooInstallationInKVM.pdf" download>
     Gentoo Linux Installation in KVM VM using genkernel
   </a>
 </button>
 
-<button class="collapsible3">
+<button class="collapsible2">
   <a href="/blogs_pdfs/DummyLinuxKernelModule.pdf" download>
     Creating a dummy Linux Kernel Module
   </a>

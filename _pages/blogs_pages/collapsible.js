@@ -6,12 +6,24 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     $(".collapsible4").click(function () {
-        $(".content2").slideToggle();
+        $(".content4").slideToggle();
     });
 });
 
 $(document).ready(function () {
     $(".collapsible5").click(function () {
         $(".content5").slideToggle();
+    });
+});
+
+$(document).ready(function () {
+    $(".collapsible6").click(function () {
+        $(".content6").slideToggle();
+    });
+});
+
+$(document).ready(function () {
+    $(".collapsible7").click(function () {
+        $(".content7").slideToggle();
     });
 });
