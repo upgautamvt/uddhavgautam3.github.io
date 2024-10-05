@@ -1,4 +1,5 @@
-# Router machine
+We create a ubuntu server a iptables based router
+# Router Ubuntu 
 
 ```
 sudo gedit /etc/sysctl.conf  
