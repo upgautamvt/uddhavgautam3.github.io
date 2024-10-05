@@ -27,10 +27,10 @@ sudo sysctl -p
 
 Wlx0013eff30e78 is a wifi internet interface. Enp0s31f6 is connected to another machine’s enp0s31f6. They have manual IP 192.168.1.102 and 101 respectively. 
 
-# To persist 
+## To persist 
 We have two options: (1) Using iptables-persistent (2) Using script
 
-## Using iptables-persistent
+### Using iptables-persistent
 ```
 sudo apt install iptables-persistent
 sudo iptables -t nat -A POSTROUTING -o wlx0013eff30e78 -j MASQUERADE
@@ -39,7 +39,7 @@ sudo iptables -A FORWARD -i enp0s31f6 -o wlx0013eff30e78 -m state --state RELATE
 sudo netfilter-persistent save
 ```
 
-## Using script
+### Using script
 ```
 sudo nano /etc/network/if-up.d/router-iptables
 #!/bin/sh
