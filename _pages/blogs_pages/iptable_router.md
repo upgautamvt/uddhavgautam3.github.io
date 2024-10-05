@@ -63,5 +63,18 @@ sudo ip route add default via 192.168.1.102
 echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf  
 nameserver 8.8.8.8
 ```
+## Persist
+Edit /etc/network/interfaces as
+```
+auto enp1s0
+iface enp1s0 inet dhcp
+post-up ip route add default via 192.168.1.102
+```
+
+And, sudo nano /etc/systemd/resolved.conf
+```
+[Resolve]
+DNS=8.8.8.8
+```
 
 
