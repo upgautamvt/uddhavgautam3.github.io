@@ -1,7 +1,7 @@
-# ModelFunctionInlined.user.c
-
-Here, we perform Dead Code Elimination (DCE), Constant Propagation (CP), and Constant Folding(CF) 
+Here, we perform Dead Code Elimination (DCE), Constant Propagation (CP), and Constant Folding(CF)
 compiler optimizations that are achievable because of inlined functions.
+
+# ModelFunctionInlined.user.c
 
 ```c
 #include <stdio.h>
@@ -61,9 +61,6 @@ printf("Execution time (inlined): %lf seconds\n", elapsed);
 return 0;
 }
 
-
-
-
 /*
 Compile as:
 Using these compiler flags trying to match eBPF programs behavior when they are launched from kernel
@@ -73,6 +70,7 @@ gcc -O2 -S -fopt-info-optimized -fopt-info-missed -o ModelFunctionInlined.s Mode
 gcc -O2 -g -o ModelFunctionInlined ModelFunctionInlined.s
 objdump -d ModelFunctionInlined > objdump_inlined.txt
 */
+
 ```
 
 
@@ -213,11 +211,11 @@ ModelFunctionNotInlined.user.c:44:5: missed: statement clobbers memory: clock_ge
 /usr/include/x86_64-linux-gnu/bits/stdio2.h:86:10: missed: statement clobbers memory: __printf_chk (2, "Execution time (not inlined): %lf seconds\n", elapsed_39);
 ```
 
-Also, the binary size of the inlined version of the program is 16.1 KB where the size of the non-inlined version of the program is 16.2 KB. 
-Because in the inlined version, the compiler during compilation time detected the unreachable code and eliminated that code as dead code, 
+Also, the binary size of the inlined version of the program is 16.1 KB where the size of the non-inlined version of the program is 16.2 KB.
+Because in the inlined version, the compiler during compilation time detected the unreachable code and eliminated that code as dead code,
 where in the not-inlined version the dead code remained there.
 
-The runtime of these two versions of programs remain the same because during 
+The runtime of these two versions of programs remain the same because during
 runtime the body inside the if condition, which is always false, doesn't get executed.
 
 # How much more unnecessary work does the compiler need to do for the not-inlined version program during compilation?
