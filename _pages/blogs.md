@@ -7,7 +7,7 @@ permalink: /blogs/
 
 # Blogs
 
-<button class="collapsible8">Inline function -- Compiler optimization </button>
+<button class="collapsible8">Inline function Compiler optimization</button>
 <div class="content8">
     {% include_relative blogs_pages/compiler_optimization.md %}
 </div>
@@ -50,6 +50,6 @@ permalink: /blogs/
   </a>
 </button>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="/_pages/blogs_pages/collapsible.js"></script>
 <link rel="stylesheet" type="text/css" href="/_pages/blogs_pages/collapsible.css">
