@@ -1,4 +1,4 @@
-# //file: ModelFunctionInlined.user.c
+# ModelFunctionInlined.user.c
 
 ```c
 #include <stdio.h>
@@ -74,7 +74,7 @@ objdump -d ModelFunctionInlined > objdump_inlined.txt
 
 
 
-# //file: ModelFunctionNotInlined.user.c
+# ModelFunctionNotInlined.user.c
 
 ```c
 #include <stdio.h>
@@ -294,7 +294,7 @@ ModelFunctionNotInlined.user.c:44:5: missed: statement clobbers memory: clock_ge
 **Note**: The binary size is 16.1 KB vs 16.2 KB.
 
 # How to quantify the runtime?
-## //file: ModelFunctionInlined.user.c
+## ModelFunctionInlined.user.c
 
 ```c
 
@@ -366,7 +366,7 @@ objdump -d ModelFunctionInlined > objdump_inlined.txt
 
 
 
-## //file: ModelFunctionNotInlined.user.c
+## ModelFunctionNotInlined.user.c
 
 ```c
 
