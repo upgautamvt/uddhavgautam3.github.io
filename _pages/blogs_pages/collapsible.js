@@ -33,3 +33,9 @@ $(document).ready(function () {
         $(".content7").slideToggle();
     });
 });
+
+$(document).ready(function () {
+    $(".collapsible8").click(function () {
+        $(".content8").slideToggle();
+    });
+});

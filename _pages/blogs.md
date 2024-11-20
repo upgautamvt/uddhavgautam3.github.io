@@ -7,6 +7,11 @@ permalink: /blogs/
 
 # Blogs
 
+<button class="collapsible8">Inline function -- Compiler optimization </button>
+<div class="content8">
+    {% include_relative blogs_pages/compiler_optimization.md %}
+</div>
+
 <button class="collapsible7">Add your own syscall</button>
 <div class="content7">
     {% include_relative blogs_pages/custom_syscall.md %}
