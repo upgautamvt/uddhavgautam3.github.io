@@ -1,5 +1,8 @@
 # ModelFunctionInlined.user.c
 
+Here, we perform Dead Code Elimination (DCE), Constant Propagation (CP), and Constant Folding(CF) 
+compiler optimizations that are achievable because of inlined functions.
+
 ```c
 #include <stdio.h>
 #include <time.h>
