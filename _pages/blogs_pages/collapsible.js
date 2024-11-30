@@ -39,3 +39,9 @@ $(document).ready(function () {
         $(".content8").slideToggle();
     });
 });
+
+$(document).ready(function () {
+    $(".collapsible9").click(function () {
+        $(".content9").slideToggle();
+    });
+});
