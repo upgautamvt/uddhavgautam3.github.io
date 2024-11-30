@@ -9,7 +9,7 @@ permalink: /blogs/
 
 <button class="collapsible9">Custom Kfunc</button>
 <div class="content9">
-    {% include_relative blogs_pages/kfunc.html %}
+    {% include_relative blogs_pages/Kfunc.html %}
 </div>
 
 <button class="collapsible8">Inline function Compiler optimization</button>
