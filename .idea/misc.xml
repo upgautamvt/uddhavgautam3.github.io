@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="rbenv: 3.2.2" project-jdk-type="RUBY_SDK" />
+  <component name="Black">
+    <option name="sdkName" value="Python 3.12 (uddhavgautam3.github.io)" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (uddhavgautam3.github.io)" project-jdk-type="Python SDK" />
 </project>

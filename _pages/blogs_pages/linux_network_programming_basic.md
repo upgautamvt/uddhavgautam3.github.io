@@ -1,7 +1,9 @@
 # Basic client-server communication using both TCP and UDP.
+
 Here we provide a basic client server communication using both TPC and UDP.
 
 ## UDP 
+
 User Datagram Protocol (UDP) is a connectionless protocol unlike connection oriented protocol 
 Transmission Control Protocol (TCP).
 
