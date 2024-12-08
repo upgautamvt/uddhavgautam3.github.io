@@ -103,8 +103,11 @@ int main(int argc, char *argv[]) {
 
 ```
 To compile: `gcc -o udp_server udp_server.c`
+
 To start server: `./udp_server 127.0.0.1 8080 "hello"`
+
 To test: `echo "hello server" | nc -u 127.0.0.1 8080`
+
 
 ```shell
 !root@amd:/home/upgautam/network_programming_linux# ./udp_server 127.0.0.1 8080 "hello"
