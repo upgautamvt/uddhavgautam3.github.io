@@ -7,6 +7,11 @@ permalink: /blogs/
 
 # Blogs
 
+<button class="collapsible9">Linux Basic Network Programming</button>
+<div class="content9">
+    {% include_relative blogs_pages/linux_network_programming_basic.md %}
+</div>
+
 <button class="collapsible8">Inline function Compiler optimization</button>
 <div class="content8">
     {% include_relative blogs_pages/compiler_optimization.md %}
