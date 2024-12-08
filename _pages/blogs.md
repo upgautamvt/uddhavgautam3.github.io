@@ -7,10 +7,13 @@ permalink: /blogs/
 
 # Blogs
 
-<button class="collapsible10">Custom Kfunc</button>
-<div class="content10">
-    {% include_relative blogs_pages/Kfunc.html %}
-</div>
+[//]: # (<button class="collapsible10">Custom Kfunc</button>)
+
+[//]: # (<div class="content10">)
+
+[//]: # (    {% include_relative blogs_pages/Kfunc.html %})
+
+[//]: # (</div>)
 
 <button class="collapsible9">Linux Basic Network Programming</button>
 <div class="content9">
