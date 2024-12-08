@@ -18,7 +18,7 @@ module Rouge
       palette :royal     => '#19003a'
 
       palette :purple    => '#840084'
-      palette :chocolate => '#920241'
+      palette :chocolate => '#920251'
       palette :lavender  => '#d8d9ff'
       palette :eggshell  => '#f3ffff'
       palette :yellow    => '#ffff3f'

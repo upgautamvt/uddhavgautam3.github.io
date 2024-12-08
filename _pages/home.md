@@ -15,9 +15,13 @@ code {padding: 6px 8px; font-size: 90%;}
 
 #### `$whoami`
 
-In our dedicated pursuit of advancing the Linux Kernel, our research revolves around exploring cutting-edge methodologies aimed at bolstering memory safety within the kernel landscape. At the forefront of our endeavors lies the development of robust memory-safe computing abstractions, meticulously engineered to underpin sophisticated and secure kernel functionalities. This intricate research initiative not only delves into the intricacies of kernel design but also endeavors to contribute to the broader paradigm shift within the Linux Kernel ecosystem.
 
-Our technical pursuits involve a nuanced investigation into memory-related vulnerabilities, propelling us to devise novel strategies and mechanisms that fortify the Linux Kernel against potential threats. By actively engaging with complex memory-safe computing paradigms, we aspire to usher in a new era of resilience and security for the Linux Kernel. Through these concerted efforts, we aim to support intricate kernel abstractions and play a pivotal role in shaping the trajectory of Linux towards a more memory-safe and secure future.
+I am currently working as a researcher in the Linux Kernel and eBPF space at Virginia Tech, where my focus is on exploring and improving various kernel components. My work includes developing eBPF-based tracing and profiling use cases, and instrumenting the kernel for both micro and macro benchmarking. I’ve also published a paper on eliminating eBPF tracing overhead on untraced processes.
+
+In addition, I’ve developed kernel modules for various use cases, such as propagating user-space code into kernel-space and triggering kernel functions. As part of my research, I added a custom Kfunc to enhance eBPF, enabling it to serialize and deserialize Protocol Buffers (protobuf). I also created an in-kernel firewall using protobuf data and integrated user-space tools like pbtool for processing protocol buffers in the kernel.
+
+Additionally, I use tracing tools such as BPFTrace, Strace, and Ftrace for debugging and performance testing to drive further optimizations in the Linux Kernel and its networking stack. I am also working on porting my research findings to the Android Kernel to extend the impact of my work and improve performance across both platforms.
+
 <br/>
 
 <div class="row" style="text-align:center">
