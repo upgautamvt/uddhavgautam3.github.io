@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 
-gem "jekyll", "4.3.3"
-gem "rack", ">= 2.2.3"
+gem "jekyll"
+gem "rack"
 gem "kramdown-parser-gfm"
 gem 'jekyll-scholar'
-gem "webrick", "~> 1.7"
+gem "webrick"
 gem "csv"
 gem "base64"
 gem "bigdecimal"
