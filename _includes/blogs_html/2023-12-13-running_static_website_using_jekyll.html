@@ -7,9 +7,22 @@
 
 <p>Before pushing, you can test locally using the below commands:</p>
 <pre>
-    % bundle exec jekyll build
-    % bundle exec jekyll serve
-    % http://localhost:4000/
+    bundle exec jekyll build
+    bundle exec jekyll serve
+    Site is ready: http://localhost:4000/
+</pre>
+
+Although I don't recommend to install any gems using sudo, but I did anyway like below,
+
+<pre>
+    sudo apt-get install ruby-full
+    gem install bundler
+    upgautamvt@upgautamlenovo:~/CLionProjects/uddhavgautam3.github.io$ ruby --version
+    ruby 3.2.3 (2024-01-18 revision 52bb2ac0a6) [x86_64-linux-gnu]
+    upgautamvt@upgautamlenovo:~/CLionProjects/uddhavgautam3.github.io$ bundler --version
+    Bundler version 2.5.23
+
+    sudo bundle install
 </pre>
 
 <p>Any .md post files inside _post should follow naming conventions.</p>
